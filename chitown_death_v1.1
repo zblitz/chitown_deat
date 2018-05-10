@@ -1,0 +1,78 @@
+import csv
+import datetime
+#------Excersize 1----
+f = open("guns.csv", 'r')
+csvreader = csv.reader(f)
+data = list(csvreader)
+#----Excersize 2-----
+headers = data[0]
+data = data[1:]
+
+#-----Excersize 3, 4,  ----
+def gun_death_counts(row_num):
+    var=[row[row_num] for row in data]
+    dict_var = {}
+    for v in var:
+        if v not in dict_var:
+            dict_var[v] = 1
+        else:
+            dict_var[v] +=1
+    return dict_var
+year_counts = gun_death_counts(1)
+intent_counts = gun_death_counts(3)
+police_counts = gun_death_counts(4)
+sex_counts = gun_death_counts(5)
+age_counts = gun_death_counts(6)
+race_counts = gun_death_counts(7)
+hispanic_counts = gun_death_counts(8)
+place_counts = gun_death_counts(9)
+education_counts = gun_death_counts(10)
+
+#---Excersize 4,5 -----
+dates = [datetime.datetime(year=int(row[1]),month=int(row[2]), day=1) for row in data]
+date_counts = {}
+for date in dates: 
+    if date not in date_counts:
+        date_counts[date] = 1
+    else: 
+        date_counts[date] +=1
+
+#----Excersize 6 ----
+f2 = open("census.csv", 'r')
+csvreader2 = csv.reader(f2)
+census_data = list(csvreader2)
+
+#----Excersize ??----
+mapping = {
+    'Asian/Pacific Islander': 15159516+674625,
+    'White':197318956,
+    'Native American/Native Alaskan':3739506,
+    'Black': 40250635,
+    'Hispanic':44618105,
+}
+
+race_per_hundredk = {}
+for key, value in race_counts.items(): 
+    race_per_hundredk[key] = (value/mapping[key])*100000
+#print(race_per_hundredk)
+
+#-----Excersize ???-----
+intents = [row[3] for row in data]
+races = [row[7] for row in data]
+# death per 100000 by race per intent
+def count_by_race_intent(intent_input):
+    intent_race_counts = {}
+    for i, race in enumerate(races):
+        if race not in intent_race_counts:
+            intent_race_counts[race] = 0
+        if intents[i] == intent_input:
+            intent_race_counts[race] +=1
+    race_per_hundredk_intent = {}
+    for key, value in intent_race_counts.items():
+        race_per_hundredk_intent[key] = (value/mapping[key])*100000
+    return race_per_hundredk_intent
+race_per_hundredk_homicide2 = count_by_race_intent('Homicide')
+race_per_hundredk_accidental = count_by_race_intent('Accidental')
+race_per_hundredk_suicide = count_by_race_intent('Suicide')
+race_per_hundredk_undetermined = count_by_race_intent('Undetermined')
+print(race_per_hundredk_homicide2)
